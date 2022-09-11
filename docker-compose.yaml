@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  app:
+    restart: always
+    container_name: bike-price-cleaner
+    build: .
+    image: bike-price-cleaner
