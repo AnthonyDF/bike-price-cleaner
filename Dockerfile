@@ -26,6 +26,9 @@ RUN python3 -m venv /opt/venv
 RUN /opt/venv/bin/pip install pip --upgrade && \
     /opt/venv/bin/pip install -r requirements.txt
 
+# Update Pythonpath
+RUN export PYTHONPATH="$PYTHONPATH:/app"
+
 # Run the command on container startup
 CMD cron && tail -f /var/log/cron.log
 #CMD ["cd /app/"]
