@@ -27,10 +27,9 @@ RUN /opt/venv/bin/pip install pip --upgrade && \
     /opt/venv/bin/pip install -r requirements.txt
 
 # Update Pythonpath
-RUN export PYTHONPATH="$PYTHONPATH:/app"
-RUN export PYTHONPATH="$PYTHONPATH:/app/bike-price-cleaner"
-RUN export PYTHONPATH="$PYTHONPATH:/app/bike-price-cleaner/utilities"
-RUN echo $PYTHONPATH
+RUN echo 'export PYTHONPATH=$PYTHONPATH:/app' >> ~/.bashrc
+RUN echo 'export PYTHONPATH=$PYTHONPATH:/app/bike-price-cleaner' >> ~/.bashrc
+RUN echo 'export PYTHONPATH=$PYTHONPATH:/app/bike-price-cleaner/utilities' >> ~/.bashrc
 
 # Run the command on container startup
 CMD cron && tail -f /var/log/cron.log
