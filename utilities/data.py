@@ -1,7 +1,8 @@
 import pandas as pd
-import psycopg2
 from dotenv import load_dotenv
 import os
+import pandas.io.sql as psql
+from sqlalchemy import create_engine
 
 
 def load_credentials():
@@ -26,13 +27,12 @@ def get_table(table, verbose=True):
         print(f'Importing {table} data from postgres db')
 
     env = load_credentials()
-    conn = psycopg2.connect(host=env['hostname'],
-                            user=env['username'],
-                            password=env['password'],
-                            dbname=env['database'],
-                            port=env['port'])
-    df = pd.read_sql_table(table, conn)
-    conn.close()
+
+    engine = create_engine(f"postgresql://{env['username']}:{env['password']}@{env['hostname']}:{env['port']}/{env['database']}")
+    sql_query = f"SELECT * FROM {table}"
+    df = psql.read_sql(sql_query, engine)
+    engine.dispose()
+
     return df
 
 
@@ -41,13 +41,10 @@ def export_to_table(dataframe, table, verbose=True):
         print(f'Exporting {table} data to postgres db')
 
     env = load_credentials()
-    conn = psycopg2.connect(host=env['hostname'],
-                            user=env['username'],
-                            password=env['password'],
-                            dbname=env['database'],
-                            port=env['port'])
-    dataframe.to_sql(table, con=conn, if_exists='replace', index=False)
-    conn.close()
+
+    engine = create_engine(f"postgresql://{env['username']}:{env['password']}@{env['hostname']}:{env['port']}/{env['database']}")
+    dataframe.to_sql(table, con=engine, if_exists='replace', index=False)
+    engine.dispose()
 
     if verbose:
         print(f'{table} exported')
