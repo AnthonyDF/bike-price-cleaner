@@ -58,6 +58,9 @@ def clean_raw_master_data(data, verbose=True, vendor_type='all'):
     df = df[((df["engine_size"] <= 2500) | (df["engine_size"].isna()))]
     if vendor_type == 'pro':
         df = df[(df["vendor_type"].isin(['pro', 'professionel', 'professionnel']))]
+    df = df[df.source.isin(
+        ['lepoledeloccasion', '4en1', 'fulloccaz', 'seb-moto', 'motoservices', 'motovente', 'montoconcess',
+         'moto-station', 'autoscoot24', 'leparking'])]
 
     # # Clean same bike with multiple prices (keep last scrapped price)
     if verbose:
