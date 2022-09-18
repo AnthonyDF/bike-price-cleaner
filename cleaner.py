@@ -14,8 +14,8 @@ def cleaner(verbose=True):
     df_bikez = get_table('bikez_database', verbose=verbose)
 
     # Match brand from raw data with bike reference database
-    df = fuzzy_match_brand(df, df_bikez, verbose=verbose)
-    df_pro = fuzzy_match_brand(df_pro, df_bikez, verbose=verbose)
+    df = fuzzy_match_brand(df.copy(), df_bikez, verbose=verbose)
+    df_pro = fuzzy_match_brand(df_pro.copy(), df_bikez, verbose=verbose)
 
     # Add features
     df = feature_engineering(df, verbose=verbose)
@@ -26,7 +26,7 @@ def cleaner(verbose=True):
     export_to_table(df_pro, 'master_clean_pro', verbose=verbose)
 
     # Prepare data before ML and export to postgres db
-    df_ml = clean_data_before_ml(df, verbose=verbose)
+    df_ml = clean_data_before_ml(df_pro, verbose=verbose)
     export_to_table(df_ml, 'master_ml', verbose=verbose)
 
 
