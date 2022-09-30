@@ -163,13 +163,25 @@ def clean_raw_master_data(data, verbose=True, vendor_type='all'):
         m = re.search(r"\d{5}", str(raw_text))
         if m is not None:
             text = m.group(0)
-            return int(text)
+            if text[:2] == '97':
+                return int(text[:3])
+            else:
+                return int(text[:2])
         else:
-            m = re.search(r"\d{2}", str(raw_text))
+            m = re.search(r"\d{3}", str(raw_text))
             if m is not None:
                 text = m.group(0)
-                return int(text + '000')
-            return None
+                if text[:2] == '97':
+                    return int(text[:3])
+                else:
+                    return int(text[:2])
+            else:
+                m = re.search(r"\d{2}", str(raw_text))
+                if m is not None:
+                    text = m.group(0)
+                    return int(text)
+                else:
+                    return None
 
     df['postal_code'] = df['localisation'].apply(lambda x: extract_postal_code(x))
 
