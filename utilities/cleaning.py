@@ -158,6 +158,21 @@ def clean_raw_master_data(data, verbose=True, vendor_type='all'):
         else:
             return 'autres'
 
+    # Extract postal code 5 digits:
+    def extract_postal_code(raw_text):
+        m = re.search(r"\d{5}", str(raw_text))
+        if m is not None:
+            text = m.group(0)
+            return int(text)
+        else:
+            m = re.search(r"\d{2}", str(raw_text))
+            if m is not None:
+                text = m.group(0)
+                return int(text + '000')
+            return None
+
+    df['postal_code'] = df['localisation'].apply(lambda x: extract_postal_code(x))
+
     if verbose:
         print("Data size before bike cleaning categories: " + str(df.shape))
     df.category = df.category.apply(clean_category)
