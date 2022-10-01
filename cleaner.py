@@ -1,3 +1,5 @@
+import pandas as pd
+
 from utilities.data import export_to_table, get_table
 from utilities.cleaning import clean_raw_master_data, clean_data_before_ml
 from utilities.fuzzy_match import fuzzy_match_brand
@@ -7,8 +9,8 @@ from utilities.feature_engineering import feature_engineering
 def cleaner(verbose=True):
     # Import raw master data and clean
     df = get_table('master', verbose=verbose)
-    df = clean_raw_master_data(df, verbose=verbose)
     df_pro = clean_raw_master_data(df, verbose=verbose, vendor_type='pro')
+    df = clean_raw_master_data(df, verbose=verbose)
 
     # Import bike database from postgrSQL server
     df_bikez = get_table('bikez_database', verbose=verbose)

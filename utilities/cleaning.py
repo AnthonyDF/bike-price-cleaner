@@ -2,6 +2,9 @@ from datetime import datetime
 import string
 import re
 
+import pandas as pd
+from utilities.data import get_table
+
 words_to_clean = ['eligible',
                   ' au ',
                   'financement',
@@ -164,26 +167,33 @@ def clean_raw_master_data(data, verbose=True, vendor_type='all'):
         if m is not None:
             text = m.group(0)
             if text[:2] == '97':
-                return int(text[:3])
+                return str(text[:3])
             else:
-                return int(text[:2])
+                return str(text[:2])
         else:
             m = re.search(r"\d{3}", str(raw_text))
             if m is not None:
                 text = m.group(0)
                 if text[:2] == '97':
-                    return int(text[:3])
+                    return str(text[:3])
                 else:
-                    return int(text[:2])
+                    return str(text[:2])
             else:
                 m = re.search(r"\d{2}", str(raw_text))
                 if m is not None:
                     text = m.group(0)
-                    return int(text)
+                    return str(text)
                 else:
                     return None
 
-    df['postal_code'] = df['localisation'].apply(lambda x: extract_postal_code(x))
+    df['dept_code'] = df['localisation'].apply(lambda x: extract_postal_code(x))
+    df_localisation = get_table('localisation', verbose=verbose)
+
+    df_localisation = df_localisation[['code_dep', 'code_name']]
+    df_localisation['code_dep'] = df_localisation['code_dep'].astype(str)
+
+    df = df.merge(df_localisation, how='left', left_on='dept_code', right_on='code_dep')
+    df.drop(columns=['code_dep'], inplace=True)
 
     if verbose:
         print("Data size before bike cleaning categories: " + str(df.shape))
